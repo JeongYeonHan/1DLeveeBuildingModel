@@ -2,6 +2,7 @@
 **Title of Manuscript**: Linking levee-building processes with channel avulsion: Geomorphic analysis for assessing avulsion frequency and style (2021)
 
 **Authors**: JeongYeon Han, Wonsuck Kim
+
 **Corresponding author**: Wonsuck Kim (delta@yonsei.ac.kr)
 * This model is computing levee building process through advection settling model
 

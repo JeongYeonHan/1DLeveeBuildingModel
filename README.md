@@ -3,7 +3,7 @@
 
 **Authors**: JeongYeon Han, Wonsuck Kim
 
-**Corresponding author**: Wonsuck Kim (delta@yonsei.ac.kr)
+**Corresponding Author**: Wonsuck Kim (delta@yonsei.ac.kr)
 * This model is computing levee building process through advection settling model
 
 LBM.m

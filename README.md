@@ -22,7 +22,7 @@ This is the Test3 script, responsible for running repeated levee aggradation und
 
 LvSlopeAvFreq.m 
 --------
-This is the levee slope and avulsion frequency script, responsible for running repeated levee aggradation with ranges of input overflow and suspended sediment conditions. (Title is shorthand for "Levee Slope and Avulsion Frequency")
+This is the levee slope and avulsion frequency script, responsible for running repeated levee aggradation with ranges of input overflow and suspended sediment conditions into the floodplain. (Title is shorthand for "Levee Slope and Avulsion Frequency")
 
 
 *Here, for diversing colour pattern for plotting Figure 7 contour maps, download multigradient.m file from https://github.com/lrkrol/multigradient, version 1.5.6 (46.3 KB) by Laurens R Krol if it is necessary.*

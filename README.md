@@ -1,16 +1,18 @@
 # 1D-Levee-Building-Model
-**Title of Manuscript**:
+**Title of Manuscript**: Linking levee-building processes with channel avulsion: Geomorphic analysis for assessing avulsion frequency and style (2021)
 * computing levee building process through advection settling model
-* Files
-1. LBM.m 
-- This is the Test1, 4, and 5 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model")
 
-2. LBM_T2.m 
-- This is the Test2 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test2")
+* LBM.m 
+* This is the Test1, 4, and 5 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model")
 
-3. LBM_T3.m 
-- This is the Test3 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test3")
+* LBM_T2.m 
+This is the Test2 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test2")
 
-4. LvSlopeAvFreq.m 
-- This is the levee slope and avulsion frequency script, responsible for running repeated levee aggradation with ranges of input overflow and suspended sediment conditions. (Title is shorthand for "Levee Slope and Avulsion Frequency")
+* LBM_T3.m 
+This is the Test3 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test3")
+
+* LvSlopeAvFreq.m 
+This is the levee slope and avulsion frequency script, responsible for running repeated levee aggradation with ranges of input overflow and suspended sediment conditions. (Title is shorthand for "Levee Slope and Avulsion Frequency")
+
+
 Here, for diversing colour pattern for plotting Figure 7 contour maps, download multigradient.m file from https://github.com/lrkrol/multigradient, version 1.5.6 (46.3 KB) by Laurens R Krol if it is necessary. 

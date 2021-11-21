@@ -1,20 +1,24 @@
 # 1D-Levee-Building-Model
 **Title of Manuscript**: Linking levee-building processes with channel avulsion: Geomorphic analysis for assessing avulsion frequency and style (2021)
 
-**Authors: JeongYeon Han, Wonsuck Kim**
-**Corresponding author: Wonsuck Kim (delta@yonsei.ac.kr)**
+**Authors**: JeongYeon Han, Wonsuck Kim
+**Corresponding author**: Wonsuck Kim (delta@yonsei.ac.kr)
 * This model is computing levee building process through advection settling model
 
-* LBM.m *
+LBM.m
+--------
 This is the Test1, 4, and 5 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model")
 
-* LBM_T2.m *
+LBM_T2.m
+--------
 This is the Test2 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test2")
 
-* LBM_T3.m *
+LBM_T3.m
+--------
 This is the Test3 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test3")
 
-* LvSlopeAvFreq.m *
+LvSlopeAvFreq.m 
+--------
 This is the levee slope and avulsion frequency script, responsible for running repeated levee aggradation with ranges of input overflow and suspended sediment conditions. (Title is shorthand for "Levee Slope and Avulsion Frequency")
 
 

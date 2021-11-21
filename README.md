@@ -1,7 +1,7 @@
 # 1D-Levee-Building-Model
 **Title of Manuscript**:
 * computing levee building process through advection settling model
-* 
+* Files
 1. LBM.m 
 This is the Test1, 4, and 5 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model")
 

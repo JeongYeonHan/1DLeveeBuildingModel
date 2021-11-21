@@ -1,9 +1,9 @@
 # 1D-Levee-Building-Model
 **Title of Manuscript**: Linking levee-building processes with channel avulsion: Geomorphic analysis for assessing avulsion frequency and style (2021)
-* computing levee building process through advection settling model
+* This model is computing levee building process through advection settling model
 
 * LBM.m 
-* This is the Test1, 4, and 5 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model")
+This is the Test1, 4, and 5 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model")
 
 * LBM_T2.m 
 This is the Test2 script, responsible for running repeated levee aggradation under a given set of input conditions. (Title is shorthand for "Levee Building Model Test2")

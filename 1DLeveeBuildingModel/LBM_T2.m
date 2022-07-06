@@ -18,9 +18,9 @@ R = (ros/ro) -1; %submerged specific gravity
 M = 20; %number of nodes
 L = 200; %levee length [m]
 %% Overflow Properties
-HI = 4; %initial flow depth [m]
-UI = 0.1; %initial flow velocity [m/s]
-qw = HI*UI; % water discharge; always constant [m2/s]
+Hf = 4; %initial flow depth [m]
+Uf = 0.1; %initial flow velocity [m/s]
+qw = Hf*Uf; % water discharge; always constant [m2/s]
 %% Assign Matrix of Parameters
 dx = L/M; %step length
 dt = 1; %time variation [s]
@@ -67,7 +67,8 @@ Hs = zeros(M,1);    % water depth associated with skin friction
 Cfn1o2 = zeros(M,1);    % Cf^-1/2
 Ustars = zeros(M,1);    % U*s shear velocity of skin friction
 Ei = zeros(M,7);    % total entrainment of each grain size at each node
-
+T_Es = zeros(M,7);
+Et = zeros(M,1);
 %%
 % Grain size 
 psi = [-6 -5 -4 -3 -2 -1 0]; %sediment grain size
@@ -96,7 +97,7 @@ T_qso = zeros(7,1);
 %% Calculate Overflow Concentration
 for k=1:7
 fun = @(z) ca(k)*(((Hc./z - 1)./19).^P(k)); % Rouse equation
-cibar0H(k) = integral(fun,(Hc-HI), Hc); %input concentration
+cibar0H(k) = integral(fun,(Hc-Hf), Hc); %input concentration
 cibarH(k) = integral(fun,0.05*Hc,Hc);
 T_qso(k) = Uc*(cibarH(k)+ca(k));
 qsoi(k) = Uc*cibar0H(k); %initial sediment discharge
@@ -107,7 +108,7 @@ T_qs=sum(qsoi);
 %% Initial Concentration of Suspended Sediment
 alpha = 1; % constant for initial suspended sediment concentration, 0 for fresh water
 for i=1:M
-    cibar(i,:) = (alpha.*qsoi)./(UI*HI);
+    cibar(i,:) = (alpha.*qsoi)./(Uf*Hf);
 end
 
 %% Update Suspended Sediment Concentration and Levee Elevation
@@ -115,11 +116,11 @@ for j=1:1:Niterations
 	for i=1:1:M
         for k=1:1:7 %7 grain size
                 if i==1
-                    cibar(i,k) = cibar(i,k)+ (((qsoi(k)-qs(i,k))/dx)+ws(k)*(Ei(i,k)-cibar(i,k)))*dt/HI; %sediment concentration at first node using the ghost node
+                    cibar(i,k) = cibar(i,k)+ (((qsoi(k)-qs(i,k))/dx)+ws(k)*(Ei(i,k)-cibar(i,k)))*dt/Hf; %sediment concentration at first node using the ghost node
                 else
-                    cibar(i,k) = cibar(i,k)+ (((qs(i-1,k)-qs(i,k))/dx)+ws(k)*(Ei(i,k)-cibar(i,k)))*dt/HI;  %sediment concentration at other nodes
+                    cibar(i,k) = cibar(i,k)+ (((qs(i-1,k)-qs(i,k))/dx)+ws(k)*(Ei(i,k)-cibar(i,k)))*dt/Hf;  %sediment concentration at other nodes
                 end
-                qs(i,k) = cibar(i,k)*UI*HI; %sediment discharge at each node
+                qs(i,k) = cibar(i,k)*Uf*Hf; %sediment discharge at each node
                 Ds(i,k) = ws(k)*(cibar(i,k)-Ei(i,k)); %deposit rate  for each grain size at each node on one iteration 
 
         end %for k
@@ -192,17 +193,29 @@ for j=1:1:Niterations
                 sigma = (sigma2)^0.5; %standard deviation
                 lamda_m = 1-0.298*sigma;    % straining parameter
                 ks = 2*D90(i,1); %roughness height over a flat bed 
-                Hs(i,1) = ((UI*ks^(1/6))/(8.32*sqrt(g*Slope(i,1))))^(3/2);%mean depth associated with skin friction
+                Hs(i,1) = ((Uf*ks^(1/6))/(8.32*sqrt(g*Slope(i,1))))^(3/2);%mean depth associated with skin friction
                 Cfn1o2(i,1) = 1/0.4*log(11*Hs(i,1)/ks); %friction coefficient
-                Ustars(i,1) = UI/Cfn1o2(i,1); %shear velocity
+                Ustars(i,1) = Uf/Cfn1o2(i,1); %shear velocity
                 Zu(i,:) = lamda_m * Ustars(i,1)./ws'.*((Repi').^0.6).*((D')./D50(i)).^0.2; 
                 Eui(i,:) = (Aa.*Zu(i,:).^5)./(1+Aa/0.3.*(Zu(i,:).^5)); %dimensionless entrainment
-                Ei(i,:) = Eui(i,:).*Pdi(i,:); %dimensionless entrainment rate per unit area      
+                Ei(i,:) = Eui(i,:).*Pdi(i,:); %dimensionless entrainment rate per unit area
+                
+                for k=1:1:7
+                    T_Es(i,k) = T_Es(i,k) + ws(k)*Ei(i,k); %total deposital rate at each node 
+                 end
+
+                Eit(i) = sum(T_Es(i,:)); %total deposital rate at each node 
+                
 	end % for M
         
         T_Pi = T_Ds./T_Dst;
-        T_f = cumsum(T_Pi')';  
-                
+        T_f = cumsum(T_Pi')'; 
+        
+         if eta(1) >= 2
+            fprintf("\n avulsion time : %g sec \n", j*dt);
+            break;
+         end
+        
       %print every 500 iteration
       if mod(j,500) 
         continue
@@ -213,17 +226,14 @@ for j=1:1:Niterations
    up_D50(jj,1) = D50(3,1);
    up_D90(jj,1) = D90(3,1);
    up_eta(jj,1) = eta(3,1);
+   up_ent_f(jj,1) = Ei(3,1);
+   up_ent_c(jj,1) = Ei(3,7);
 
    %downstream time variation (M=15)
    dw_eta(jj,1) = eta(15,1);
    dw_D50(jj,1) = D50(15,1);
    dw_D90(jj,1) = D90(15,1);
     
-%         if eta(1) >= Hc-HI
-         if eta(1) >= 2
-            fprintf("\n avulsion time : %g sec \n", j*dt);
-            break;
-        end
 end %for j
 
 %% Plots
@@ -232,7 +242,7 @@ fprintf("\n total runtime : %g sec \n", Niterations*dt)
 fprintf("\n mean elevation : %g m \n", mean(eta))
 fprintf("\n max elevation : %g m\n", max(eta))
 fprintf("\n min elevation : %g m\n", min(eta))
-fprintf("\n slope of levee : %g \n", max(eta)/L)
+fprintf("\n slope of levee : %g \n", 8/(sum(eta(:))*dx))
 %%
 % Levee elevation
 figure(3)
@@ -244,11 +254,14 @@ figure(3)
 % Aggradation rate at N = 3, 15
 figure(4);
     subplot(1,2,1);
-    plot(jprint*dt/60,up_eta); axis([0 8000 0 1.8]);
+    plot(jprint*dt/60,up_eta); axis([0 11000 0 1.8]);
     title('Upstream'); xlabel('T [min]'); ylabel('elevation [m]'); hold on;
     subplot(1,2,2);
-    plot(jprint*dt/60,dw_eta); axis([0 8000 0 0.25]);
+    plot(jprint*dt/60,dw_eta); axis([0 11000 0 0.3]);
     title('Downstream'); xlabel('T [min]'); ylabel('elevation [m]'); hold on;
+%%
+l = length(up_eta);
+fprintf("\n aggradation rates : %g, %g \n", (up_eta(l,1)*60)/(jprint(l,1)*dt),(dw_eta(l,1)*60)/(jprint(l,1)*dt))
 %%
 % Calculating D50 in total deposition
     T_D50 = zeros(M,1);
@@ -285,14 +298,15 @@ figure(5)
    plot(nn,T_D50); hold on;
    plot(nn,T_D90);
    title('D50 & D90 values at each position'); xlabel('levee width [m]'); ylabel('D [mm]'); axis([0 200 0 0.2]);
+   
 % Temporal Grainsize variation at N = 3, 15       
 figure(6)
    subplot(1,2,1)
    plot(jprint*dt/60,up_D50*1000); hold on; 
    plot(jprint*dt/60,up_D90*1000);
-   title('Proximal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 8000 0.02 0.18]);
+   title('Proximal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 11000 0.02 0.18]);
    subplot(1,2,2)
    plot(jprint*dt/60,dw_D50*1000); hold on; 
    plot(jprint*dt/60,dw_D90*1000);
-   title('Distal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 8000 0.02 0.18]);
+   title('Distal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 11000 0.02 0.18]);
    

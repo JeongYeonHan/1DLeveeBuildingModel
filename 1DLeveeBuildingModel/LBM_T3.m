@@ -20,9 +20,9 @@ L = 200; %levee length [m]
 %% Overflow Properties
 Hc = 8; % channel depth
 Uc = 1.5; % channel velocity
-HI = 4; %initial overbank flow depth [m]
-UI = 0.1; %initial overbank flow velocity [m/s]
-qw = HI*UI; % water discharge in floodplain; always constant [m2/s]
+Hf = 4; %initial overbank flow depth [m]
+Uf = 0.1; %initial overbank flow velocity [m/s]
+qw = Hf*Uf; % water discharge in floodplain; always constant [m2/s]
 %% Assign Matrix of Parameters
 dx = L/M; %step length
 dt = 1; %time variation [s]
@@ -59,9 +59,9 @@ for i=1:M
 end
 %% Update Flow Velocity and Water Depth due to Sediment Deposition
 %setup initial flow velocity and water depth across the floodplain
-H = ones(M,1)*HI; %flow velocity
-U = ones(M,1)*UI; %water depth
-dH = zeros(M,1); %velocity variation
+H = ones(M,1)*Hf; %water depth 
+U = ones(M,1)*Uf; %flow velocity
+dH = zeros(M,1); %depth variation
 
 %% Entrainment Relationship by Garcia and Parker (1991)
 Aa = 1.3e-7; %Entrainment relationship, garcia and Parker (1991), A
@@ -96,7 +96,7 @@ cibar0H = zeros(7,1);
 
 for k=1:7
 fun = @(z) ca(k)*(((Hc./z - 1)./19).^P(k)); % Rouse equation
-cibar0H(k) = integral(fun,(Hc-HI), Hc); %input concentration
+cibar0H(k) = integral(fun,(Hc-Hf), Hc); %input concentration
 cibarH(k) = integral(fun,0.05*Hc,Hc); %sediment concentration for ith grain size in channel
 end
 
@@ -109,7 +109,7 @@ qsot = sum(qsoi); %total supplied sediment discharge
 %% Initial Concentration of Suspended Sediment
 alpha = 1; % constant for initial suspended sediment concentration, 0 for fresh water
 for i=1:M
-    cibar(i,:) = (alpha.*qsoi)./(UI*HI);
+    cibar(i,:) = (alpha.*qsoi)./(Uf*Hf);
 end
 
 %% Update Suspended Sediment Concentration and Levee Elevation
@@ -163,10 +163,9 @@ for j=1:1:Niterations
                 fd(fd>1)=1;   % some errors, sum larger than 1 changes to 1
                 
                 %update water depth and flow velocity
-                H(i) = HI+eta(1) - eta(i); %flow velocity
+                H(i) = Hf+eta(1) - eta(i); %flow velocity
                 U(i) = qw/H(i); %water depth
-                dH(i) = Dst(1)-Dst(i); %variation of flow velocity
-                z_H = eta(1)/HI;
+                dH(i) = Dst(1)-Dst(i); %variation of flow velocity per each interation
                 
                 %calculating D50 
                 xtx = 0.5; % grain size such that xtx % of the material
@@ -195,6 +194,11 @@ for j=1:1:Niterations
         T_Pi = T_Ds./T_Dst;
         T_f = cumsum(T_Pi')';  
         
+        if eta(1) >= 2
+            fprintf("\n avulsion time : %g sec \n", j*dt);
+        break;
+        end 
+        
       %print every 500 iteration
         if mod(j,500) 
             continue
@@ -212,11 +216,6 @@ for j=1:1:Niterations
     dw_D90(jj,1) = D90(15,1);
     dw_eta(jj,1) = eta(15,1);
     
-%         if eta(1) >= Hc-HI
-        if eta(1) >= 2
-            fprintf("\n avulsion time : %g sec \n", j*dt);
-        break;
-        end 
 end %for j
 
 %% Plots
@@ -225,10 +224,9 @@ fprintf("\n total runtime : %g sec \n", Niterations*dt)
 fprintf("\n mean elevation : %g m \n", mean(eta))
 fprintf("\n max elevation : %g m\n", max(eta))
 fprintf("\n min elevation : %g m\n", min(eta))
-fprintf("\n slope of levee : %g \n", max(eta)/L)
+fprintf("\n slope of levee : %g \n", 8/(sum(eta(:))*dx))
 
 %%
-
 % Levee elevation
 figure(3)
     nn = 1:20;
@@ -239,10 +237,10 @@ figure(3)
 % Aggradation rate at N = 3, 15
 figure(4);
 subplot(1,2,1);
-plot(jprint*dt/60,up_eta); axis([0 8000 0 1.8]);
+plot(jprint*dt/60,up_eta); axis([0 11000 0 1.8]);
 title('Upstream'); xlabel('T [min]'); ylabel('elevation [m]'); hold on;
 subplot(1,2,2);
-plot(jprint*dt/60,dw_eta); axis([0 8000 0 0.25]);
+plot(jprint*dt/60,dw_eta); axis([0 11000 0 0.3]);
 title('Downstream'); xlabel('T [min]'); ylabel('elevation [m]'); hold on;
 
 %%
@@ -283,17 +281,18 @@ title('Downstream'); xlabel('T [min]'); ylabel('elevation [m]'); hold on;
    plot(nn,T_D50*1000); hold on;
    plot(nn,T_D90*1000);
    title('D50 & D90 values at each position'); xlabel('levee width [m]'); ylabel('D [mm]'); axis([0 200 0 0.2]);
+   
 % Temporal Grainsize variation at N = 3, 15     
    figure(6)
    subplot(1,2,1)
    plot(jprint*dt/60,up_D50*1000);
    hold on; 
    plot(jprint*dt/60,up_D90*1000);
-   title('Proximal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 8000 0.02 0.18]);
+   title('Proximal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 11000 0.02 0.18]);
    subplot(1,2,2)
    plot(jprint*dt/60,dw_D50*1000);
    hold on; 
    plot(jprint*dt/60,dw_D90*1000);
-   title('Distal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 8000 0.02 0.18]);
+   title('Distal'); xlabel('time [min]'); ylabel('D [mm]'); axis([0 11000 0.02 0.18]);
    
    

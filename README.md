@@ -1,7 +1,7 @@
 # 1D-Levee-Building-Model
 **Title of Manuscript**: 
 
-Linking levee-building processes with channel avulsion: Geomorphic analysis for assessing avulsion frequency and style (2021)
+Linking levee-building processes with channel avulsion: geomorphic analysis for assessing avulsion frequency and channel reoccupation (2021)
 
 **Authors**: JeongYeon Han, Wonsuck Kim
 

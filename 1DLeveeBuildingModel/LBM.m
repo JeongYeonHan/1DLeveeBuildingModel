@@ -8,7 +8,7 @@
 % Entrainment X
 clear all; 
 % close all;
-%%
+%% 
 % Test 1
 Uf = 0.1; psi = [-6 -5 -4 -3 -2 -1 0]; %overflow velocity; grain size range in channel; 
 % Test 4
@@ -115,7 +115,7 @@ figure(1)
 plot(psi,p,'--'); grid on; hold on;
 plot(psi,p_qso,'--')
 title("The grainsize distribution of channel and floodplain");
-legend('channel','floodplain'); axis([-6 1 0 1]); xlabel('psi [ ]'); ylabel('fraction [ ]')
+legend('channel','floodplain'); axis([-6 1 0 1]); xlabel('psi [ ]'); ylabel('fraction [ ]') 
 % Plot cumulative distribution of channel and floodplain
 figure(2) 
 plot(psi,F,'--'); grid on; hold on;
@@ -189,7 +189,7 @@ for j=1:1:Niterations
                         Pdi(i,k) = 0;
                         Ds(i,k) = 0;
                     end
-                    T_Ds(i,k) = T_Ds(i,k) + Ds(i,k); %total deposital rate at each node %ÀÏÁ¤ °£°İ¸¶´Ù ÃßÀûÇÏ¿© ½×ÀÌ´Â °úÁ¤ plotÇÏ¿© »ìÇÇ±â
+                    T_Ds(i,k) = T_Ds(i,k) + Ds(i,k); %total deposital rate at each node %ì¼ì • ê°„ê²©ë§ˆë‹¤ ì¶”ì í•˜ì—¬ ìŒ“ì´ëŠ” ê³¼ì • plotí•˜ì—¬ ì‚´í”¼ê¸°
                  end
 
                 T_Dst(i) = sum(T_Ds(i,:)); %total deposital rate at each node 

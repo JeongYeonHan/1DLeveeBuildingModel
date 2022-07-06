@@ -17,7 +17,7 @@ Uf = 0.1; psi = [-6 -5 -4 -3 -2 -1 0]; %overflow velocity; grain size range in c
 % Uf = 0.1; psi = [-5 -4 -3 -2 -1 0 1]; 
 %%
 g = 9.81; %acceleration of gravity
-nu = 1*10^(-6); %kinematic viscosity
+nu = 1*10^(-6); %kinematic viscosity 
 ro = 1000; %water density
 ros = 2650; %sediment density
 R = (ros/ro) -1; %submerged specific gravity

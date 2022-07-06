@@ -18,15 +18,15 @@ k=0;
 for i=1:M
     Ps = (i/10)-7.6; %grainsize
     for j=1:N
-        UI=0.1 + 0.001*(j-1); %overflow velocity
-        [output1,output2,output3,output4] = AVF(UI,Ps);
+        Uf=0.1 + 0.001*(j-1); %overflow velocity
+        [output1,output2,output3,output4] = AVF(Uf,Ps);
         if output3 > 0 %maintain wedge shape
             continue;
         else
         k=k+1;
         D50(k) = output1; %median grainsize of SSC into floodplain    
-        U(k) = UI; %overflow velocity
-        f(k) = 60*60*24*30*12*0.02/output2; %avulsion frequency
+        U(k) = Uf; %overflow velocity
+        f(k) = 60*60*24*30*12*0.002/output2; %avulsion frequency I_f = 0.002
         S(k) = output4; %characteristic slope
         end
     end
@@ -94,7 +94,7 @@ L = 200; %levee length [m]
 %% 
 %overflow properties
 HI = 4; %initial overflow depth [m]
-Hc = 8;
+Ht = 8;
 %%
 dx = L/M; %step length
 dt = 10; %time variation [s]
@@ -175,7 +175,7 @@ output1 = D50_qso;
                 % range in the deposit  
       %print every 100 iteration
         end 
-        if eta(1) >= Hc-HI
+        if eta(1) >= (Ht-HI)
 %             fprintf("\n avulsion time : %g sec \n", j*dt);
             break;
         end
@@ -185,7 +185,7 @@ output1 = D50_qso;
 output2 = j*dt; %flood occurs for 2 months per year [yr]
 output3 = max(diff(eta));
 A = sum(eta(:))*dx;
-output4 = 32/A;
+output4 = 8/A; %Hc = 4m
 end
 
    
